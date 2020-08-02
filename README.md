@@ -10,7 +10,7 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 1. Ensure you have Alfred installed with the Alfred Powerpack License
 2. Install LastPass command line interface
 	1. using MacPorts: 'sudo port install lastpass-cli lastpass-cli-doc'
-	2. using HomeBrew: 'brew install lastpass-cli --with-pinentry --with-doc'
+	2. using HomeBrew: 'brew install lastpass-cli'
     3. manually, see https://github.com/LastPass/lastpass-cli for details
 3. Download and open https://github.com/lhaeger/lastpass-alfred-workflow/blob/master/lastpass-cli-alfred-workflow.alfredworkflow
 4. Run 'lpsetemail yourloginemail@yourdomain.com' in Alfred to set your LastPass username.

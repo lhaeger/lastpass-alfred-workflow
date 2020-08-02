@@ -1,4 +1,4 @@
-# Simple Lastpass Workflow for Alfred
+# Lastpass Search Workflow for Alfred
 
 Simple yet powerful integration with the Lastpass CLI so you can now get your passwords out of your Lastpass vault and straight into the clipboard from within Alfred.
 
@@ -7,12 +7,12 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## Installation
 
-1. Ensure you have Alfred installed with the Alfred Powerpack License
+1. Ensure you have Alfred 3 or 4 installed with the Alfred Powerpack License
 2. Install LastPass command line interface
 	1. using MacPorts: 'sudo port install lastpass-cli lastpass-cli-doc'
 	2. using HomeBrew: 'brew install lastpass-cli'
     3. manually, see https://github.com/LastPass/lastpass-cli for details
-3. Download and open https://github.com/lhaeger/lastpass-alfred-workflow/blob/master/lastpass-cli-alfred-workflow.alfredworkflow
+3. Download and open https://github.com/lhaeger/lastpass-alfred-workflow/raw/master/LastPass-Search.alfredworkflow
 4. Run 'lpsetemail yourloginemail@yourdomain.com' in Alfred to set your LastPass username.
 
 ## Usage
@@ -36,6 +36,7 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 * Version 1.4.9
 	1. Fixed a filesystem access issue, probably introduced with security inprovements in macOS 10.15.6 (?), causing LastPass login to fail.
+    2. Updated install instructions in Readme.
 * Version 1.4.8
 	1. If no folder/category is set for an entry in LastPass the CLI returns the literal text "(none)", which is then displayed in Alfred. Removed it (as well as translations in other languages).
 * Version 1.4.7
@@ -84,10 +85,9 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## Credits
 
-Created by [Stuart Ryan](http://stuartryan.com). If you would like to get into contact you can do so via:
-* [@StuartCRyan on Twitter](http://twitter.com/stuartcryan)
-* [Stuart Ryan on LinkedIn](https://au.linkedin.com/in/stuartcryan)
-* [Technical Notebook Blog](http://technicalnotebook.com)
+Created by [Stuart Ryan](http://stuartryan.com) (<= v1.4.7) 
+
+Updated by [Lothar Haeger](https://github.com/lhaeger) (>= v1.4.8)
 
 ## License
 

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.stuartryan.alfred.lastpass</string>
+	<string>com.brummelhook.alfred.lastpass</string>
 	<key>category</key>
-	<string>Tools</string>
+	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
 		<key>01DFFE0F-13AB-4E19-AC39-8E2177548224</key>
@@ -237,13 +237,13 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Stuart Ryan</string>
+	<string>Lothar Haeger</string>
 	<key>description</key>
-	<string></string>
+	<string>Search LastPass for usernames, sites and passwords</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>LastPass CLI</string>
+	<string>LastPass Search</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -284,12 +284,6 @@ set current_unix_path to POSIX path of current_path
 
 set osascript to (system attribute "alfred_preferences") &amp; "/workflows/" &amp; (system attribute "alfred_workflow_uid") &amp; "/passwordInput.osascript"
 
-try
-	do shell script "mkdir \"" &amp; (system attribute "alfred_workflow_data") &amp; "\""
-end try
-
-do shell script "echo \"" &amp; osascript &amp; "\" &gt; \"" &amp; (system attribute "alfred_workflow_data") &amp; "/running_location.txt\""
-
 do shell script "export LPASS_ASKPASS=\"" &amp; osascript &amp; "\""
 do shell script "launchctl setenv LPASS_ASKPASS \"" &amp; osascript &amp; "\""
 
@@ -314,7 +308,7 @@ end if
 do shell script "/bin/bash -c '" &amp; "export TERM=\"xterm-256color\" &amp;&amp; export LPASS_ASKPASS=\"" &amp; osascript &amp; "\" &amp;&amp; export LPASS_AGENT_TIMEOUT=" &amp; login_timeout &amp; " &amp;&amp; " &amp; lpass_binary &amp; " login --trust \"" &amp; login_email &amp; "\" &amp;&amp; clear &amp;&amp; " &amp; lpass_binary &amp; " ls --sync=now &gt; /dev/null 2&gt;&amp;1 &amp;&amp; exit 0'"
 
 if ("{query}" = "scriptlocationnotset") then
-tell application "Alfred 3" to search "lp "
+tell application id "com.runningwithcrayons.Alfred" to search "lp "
 end if</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -395,7 +389,7 @@ end if</string>
 			<key>uid</key>
 			<string>815177FB-CED1-42F3-AC5B-C1AC60735FA1</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -473,6 +467,8 @@ print $results;
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -622,7 +618,7 @@ exit 0;</string>
 			<key>uid</key>
 			<string>29656ADA-02CB-48FC-BC0E-20376CF8D8EF</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -740,7 +736,7 @@ print $results;
 			<key>uid</key>
 			<string>201D2F2C-024E-4FA6-8B0C-CF32974E5077</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1025,12 +1021,11 @@ echo "{query}"</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>See installation instructions at https://github.com/stuartcryan/lastpass-alfred-workflow
-For support please log a ticket on https://github.com/stuartcryan/lastpass-alfred-workflow
+	<string>This is an updated and rebranded version of the LastPass CLI workflow initially created by Stuart C. Ryan and published under GPL-2.
 
-NOTE: This Alfred Workflow is not affiliated in any way with LastPass. The LastPass trademark and logo are owned by LastPass.com. The LastPass logo and product name have been used with permission of the LastPass team.
+Since the original piece has some bugs that prevent using it on macOS Catalina and since 2016 pull requests are ignored, I assume hthe code has been abandoned and submit my updated fork as an alternative to move forward.
 
-My thanks go out to LastPass for their awesome product and the new CLI!</string>
+See installation instructions at https://github.com/lhaeger/lastpass-alfred-workflow</string>
 	<key>uidata</key>
 	<dict>
 		<key>01DFFE0F-13AB-4E19-AC39-8E2177548224</key>
@@ -1188,9 +1183,11 @@ My thanks go out to LastPass for their awesome product and the new CLI!</string>
 			<integer>620</integer>
 		</dict>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>1.4.8</string>
+	<string>1.4.9</string>
 	<key>webaddress</key>
-	<string>http://technicalnotebook.com</string>
+	<string>https://github.com/lhaeger/lastpass-alfred-workflow</string>
 </dict>
 </plist>

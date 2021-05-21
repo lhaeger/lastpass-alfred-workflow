@@ -2,7 +2,7 @@
 
 Simple yet powerful integration with the Lastpass CLI so you can now get your passwords out of your Lastpass vault and straight into the clipboard from within Alfred.
 
-## Current version: 1.4.9
+## Current version: 1.5.0
 Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## Installation
@@ -34,6 +34,11 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## History
 
+* Version 1.5.0
+	1. Homebrew switched to use /opt/homebrew/bin as default path now. Add this path to binary findings.
+	2. Remove the --trust option from the login command, since this will remove the multifactor option.
+    3. Add support for searching by username
+	4. Reformat Perl code using perltidy
 * Version 1.4.9
 	1. Fixed a filesystem access issue, probably introduced with security inprovements in macOS 10.15.6 (?), causing LastPass login to fail.
     2. Updated install instructions in Readme.

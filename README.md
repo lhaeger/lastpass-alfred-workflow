@@ -2,27 +2,31 @@
 
 Simple yet powerful integration with the Lastpass CLI so you can now get your passwords out of your Lastpass vault and straight into the clipboard from within Alfred.
 
-## Current version: 1.4.9
+## Current version: 1.5.0
 Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## Installation
 
 1. Ensure you have Alfred 3 or 4 installed with the Alfred Powerpack License
 2. Install LastPass command line interface
-	1. using MacPorts: 'sudo port install lastpass-cli lastpass-cli-doc'
-	2. using HomeBrew: 'brew install lastpass-cli'
+	1. using MacPorts: `sudo port install lastpass-cli lastpass-cli-doc`
+	2. using HomeBrew: `brew install lastpass-cli`
     3. manually, see https://github.com/LastPass/lastpass-cli for details
 3. Download and open https://github.com/lhaeger/lastpass-alfred-workflow/raw/master/LastPass-Search.alfredworkflow
-4. Run 'lpsetemail yourloginemail@yourdomain.com' in Alfred to set your LastPass username.
+4. Run `lpsetemail yourloginemail@yourdomain.com` in Alfred to set your LastPass username.
 
 ## Usage
 
-* lpsetemail yourname@example.com - must be run when you first install/upgrade to version 1.2 or higher
-* lpsettimeout NUMSEC - Set number of seconds until your login times out (where NUMSEC is an integer such as 28800, if you use 0 that will keep you logged in until your computer restarts)
-* lplogin - Log in to LastPass
-* lplogout - Log out of LastPass
-* lp <query> Search Lastpass vault for item containing <query>, press return to copy to clipboard.
-* Shift modifier can be used on lp <query> to copy the username.
+* `lpsetemail yourname@example.com` - must be run when you first install/upgrade to version 1.2 or higher
+* `lpsettimeout NUMSEC` - Set number of seconds until your login times out (where NUMSEC is an integer such as 28800, if you use 0 that will keep you logged in until your computer restarts)
+* `lplogin` - Log in to LastPass
+* `lplogout` - Log out of LastPass
+* `lp <query>` Search Lastpass vault for item containing `<query>` 
+	* `<query>` can be a literal string or a regular expression
+	* `<query>` is matched as case-insensitive substring against the name, folder or username fields of your lasspass items.
+	* If multiple `<query>` strings are provided (separated by whitespace) all of them need to match.
+	* Press RETURN to copy the password to clipboard.
+	* Press Shift-RETURN to copy the username to clipboard.
 
 ## Contributing
 
@@ -34,6 +38,11 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## History
 
+* Version 1.5.0
+	1. Homebrew switched to use `/opt/homebrew/bin` as default path now. Add this path to binary findings. ([thanks to Andreas Krüger](https://github.com/lhaeger/lastpass-alfred-workflow/pull/1))
+	2. Remove the `--trust` option from the login command, since this will remove the multifactor option. ([thanks to Andreas Krüger](https://github.com/lhaeger/lastpass-alfred-workflow/pull/1))
+	3. Add support for searching by username
+	4. Reformat Perl code using perltidy
 * Version 1.4.9
 	1. Fixed a filesystem access issue, probably introduced with security inprovements in macOS 10.15.6 (?), causing LastPass login to fail.
     2. Updated install instructions in Readme.
@@ -75,8 +84,8 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 	4. Bug - Fixed bash script reliability, after two login attempts the script was often failing.
 	3. Improvement - Improved sync behaviour to better support extremely large vaults.
 	4. Improvement - Added new 'lpsync' command to force a sync on demand.
-	5. Improvement - Changed behaviour to store login email in your Apple Keychain (set with 'lpsetemail yourname@example.com').
-	6. Improvement - Added the ability to set the logout timeout and store in the keychain (set with 'lpsettimeout NUMSEC' where NUMSEC is an integer such as 28800, if you use 0 that will keep you logged in until your computer restarts).
+	5. Improvement - Changed behaviour to store login email in your Apple Keychain (set with `lpsetemail yourname@example.com`).
+	6. Improvement - Added the ability to set the logout timeout and store in the keychain (set with `lpsettimeout NUMSEC` where NUMSEC is an integer such as 28800, if you use 0 that will keep you logged in until your computer restarts).
 	7. Improvement - Added hotkeys to the main functions.
 * Version 1.1
 	1. Removed code that worked around an old buggy version of pinentry

@@ -2,7 +2,7 @@
 
 Simple yet powerful integration with the Lastpass CLI so you can now get your passwords out of your Lastpass vault and straight into the clipboard from within Alfred.
 
-## Current version: 1.5.0
+## Current version: 1.5.1
 Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## Installation
@@ -38,6 +38,8 @@ Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
 
 ## History
 
+* Version 1.5.1
+	1. Updated workflow icon
 * Version 1.5.0
 	1. Homebrew switched to use `/opt/homebrew/bin` as default path now. Add this path to binary findings. ([thanks to Andreas Krüger](https://github.com/lhaeger/lastpass-alfred-workflow/pull/1))
 	2. Remove the `--trust` option from the login command, since this will remove the multifactor option. ([thanks to Andreas Krüger](https://github.com/lhaeger/lastpass-alfred-workflow/pull/1))

@@ -383,6 +383,8 @@ end if</string>
 				<false/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
 				<key>transient</key>
 				<true/>
 			</dict>
@@ -543,7 +545,7 @@ foreach my $f (qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass
 $search=~ s/ /" | grep -i "/g;
 
 my ($results, $err, $errorCode) = capture {
-    system("export LPASS_ASKPASS=\"/dev/null\" &amp;&amp; export LPASS_AGENT_TIMEOUT=\"" . $loginTimeout . "\" &amp;&amp; " . $lpass_exec . ' ls --sync=no | grep -i "' . $search . '"');
+    system("export LPASS_ASKPASS=\"/dev/null\" &amp;&amp; export LPASS_AGENT_TIMEOUT=\"" . $loginTimeout . "\" &amp;&amp; " . $lpass_exec . ' ls --sync=no --long | grep -i "' . $search . '"');
 };
 
 print qq{&lt;?xml version="1.0"?&gt;\n&lt;items&gt;\n};
@@ -577,12 +579,10 @@ foreach my $result (@resultsArray) {
 my $id;
 my $name;
 my $username;
-if ($result =~ '^(.*) +\[id: ([0-9]*)\]'){
+if ($result =~ '^[\d -:]+(.*) +\[id: ([0-9]*)\] +\[username: (.*)\]'){
 $name = "$1";
 $id = "$2";
-($username, $err, $errorCode) = capture {
-    system("export LPASS_ASKPASS=\"/dev/null\" &amp;&amp; export LPASS_AGENT_TIMEOUT=\"" . $loginTimeout . "\" &amp;&amp; " . $lpass_exec . ' show --username --sync=no ' . $id);
-};
+$username = "$3";
 }
 
 chomp $username;
@@ -730,6 +730,8 @@ print $results;
 				<false/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
 				<key>transient</key>
 				<true/>
 			</dict>
@@ -1025,7 +1027,7 @@ echo "{query}"</string>
 	<key>readme</key>
 	<string>This is an updated and rebranded version of the LastPass CLI workflow initially created by Stuart C. Ryan and published under GPL-2.
 
-Since the original piece has some bugs that prevent using it on macOS Catalina and since 2016 pull requests are ignored, I assume hthe code has been abandoned and submit my updated fork as an alternative to move forward.
+Since the original piece has some bugs that prevent using it on macOS Catalina and since 2016 pull requests are ignored, I assume the code has been abandoned and submit my updated fork as an alternative to move forward.
 
 See installation instructions at https://github.com/lhaeger/lastpass-alfred-workflow</string>
 	<key>uidata</key>
@@ -1188,7 +1190,7 @@ See installation instructions at https://github.com/lhaeger/lastpass-alfred-work
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.4.9</string>
+	<string>1.5.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/lhaeger/lastpass-alfred-workflow</string>
 </dict>

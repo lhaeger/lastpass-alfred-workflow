@@ -403,31 +403,36 @@ end if</string>
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>@details=({query});
+				<string>@details = ( {query} );
 
-if ($details[0] eq 'error-noinstall'){
-`open https://github.com/LastPass/lastpass-cli`;
-exit 1;
-} else {
-
-my $lpass_exec;
-foreach my $f (qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@) {
-    $lpass_exec = $f
-        if (-x $f);
+if ( $details[0] eq 'error-noinstall' ) {
+    `open https://github.com/LastPass/lastpass-cli`;
+    exit 1;
 }
+else {
 
-my $loginTimeout =`security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`; 
-chomp $loginTimeout;
+    my $lpass_exec;
+    foreach my $f (
+        qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@
+      )
+    {
+        $lpass_exec = $f
+          if ( -x $f );
+    }
 
+    my $loginTimeout =
+      `security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`;
+    chomp $loginTimeout;
 
-open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt"; 
-my $firstLine = &lt;$file&gt;; 
-close $file;
-chomp $myFirstLine;
+    open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt";
+    my $firstLine = &lt;$file&gt;;
+    close $file;
+    chomp $myFirstLine;
 
-my $results = qx{export LPASS_ASKPASS=\"$firstLine\" &amp;&amp; export LPASS_AGENT_TIMEOUT="$loginTimeout" &amp;&amp; $lpass_exec show --sync=no --username $details[1]};
-chomp $results;
-print $results;
+    my $results =
+qx{export LPASS_ASKPASS=\"$firstLine\" &amp;&amp; export LPASS_AGENT_TIMEOUT="$loginTimeout" &amp;&amp; $lpass_exec show --sync=no --username $details[1]};
+    chomp $results;
+    print $results;
 }</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -498,110 +503,125 @@ use warnings;
 use Env;
 use Capture::Tiny 'capture';
 
-my $search="{query}";
-$search=~ s/\'/\\'/g;
+my $search = "{query}";
+$search =~ s/\'/\\'/g;
 
-my $loginTimeout =`security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`; 
+my $loginTimeout =
+  `security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`;
 chomp $loginTimeout;
 
-open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt"; 
-my $firstLine = &lt;$file&gt;; 
+open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt";
+my $firstLine = &lt;$file&gt;;
 close $file;
 chomp $firstLine;
-
-#if ( length($search) &lt; 3 ) {
-#    exit 0;
-#}
 
 my $loginScriptLocation = `launchctl getenv LPASS_ASKPASS`;
 
 chomp($loginScriptLocation);
 
-#check if getenv LPASS_ASKPASS is not set... if it isn't a login definitely
-#hasn't been completed by the flow and needs to be.
+#check if getenv LPASS_ASKPASS is not set... if it isn't a login definitely hasn't been completed by the flow and needs to be.
 
-if ($loginScriptLocation eq "")
-{
-print qq{&lt;?xml version="1.0"?&gt;\n&lt;items&gt;\n};
-print qq{&lt;item uid="error-login"&gt;&lt;arg&gt;scriptlocationnotset&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
+if ( $loginScriptLocation eq "" ) {
+    print qq{&lt;?xml version="1.0"?&gt;\n&lt;items&gt;\n};
+    print
+qq{&lt;item uid="error-login"&gt;&lt;arg&gt;scriptlocationnotset&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
 
-print "&lt;/items&gt;\n";
-exit 1;
+    print "&lt;/items&gt;\n";
+    exit 1;
 }
 
-my ($agent, $agentErr, $agentErrCode) = capture {
-  system('ps -ef | grep "lpass \[agent\]" | grep -v grep | grep -v "perl"');
+my ( $agent, $agentErr, $agentErrCode ) = capture {
+    system('ps -ef | grep "lpass \[agent\]" | grep -v grep | grep -v "perl"');
 };
 
 my $lpass_exec;
-foreach my $f (qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@) {
+foreach my $f (
+    qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@
+  )
+{
     $lpass_exec = $f
-        if (-x $f);
+      if ( -x $f );
 }
 
-#add multiple grep statements to deal with multiple words as AWK on OSx
-#does not allow for case insensitive searches
+#add multiple grep statements to deal with multiple words as AWK on OSx does not allow for case insensitive searches
 
-$search=~ s/ /" | grep -i "/g;
+$search =~ s/ /" | grep -i "/g;
 
-my ($results, $err, $errorCode) = capture {
-    system("export LPASS_ASKPASS=\"/dev/null\" &amp;&amp; export LPASS_AGENT_TIMEOUT=\"" . $loginTimeout . "\" &amp;&amp; " . $lpass_exec . ' ls --sync=no --long | grep -i "' . $search . '"');
+my ( $results, $err, $errorCode ) = capture {
+    system(
+        "export LPASS_ASKPASS=\"/dev/null\" &amp;&amp; export LPASS_AGENT_TIMEOUT=\""
+          . $loginTimeout
+          . "\" &amp;&amp; "
+          . $lpass_exec
+          . ' ls --sync=no --long | grep -i "'
+          . $search
+          . '"' );
 };
 
 print qq{&lt;?xml version="1.0"?&gt;\n&lt;items&gt;\n};
 
-if (($err =~ '^Error.*ogin.*') || ($agentErr ne "" &amp;&amp; $agentErr != 0)){
-print qq{&lt;item uid="error-login"&gt;&lt;arg&gt;'error-login', '$results'&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
+if ( ( $err =~ '^Error.*ogin.*' ) || ( $agentErr ne "" &amp;&amp; $agentErr != 0 ) ) {
+    print
+qq{&lt;item uid="error-login"&gt;&lt;arg&gt;'error-login', '$results'&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
 
-print "&lt;/items&gt;\n";
-exit 1;
-} elsif (($err =~ '^Error.*Unable.*retrieve.*askpass.*reply.*')){
-print qq{&lt;item uid="error-login"&gt;&lt;arg&gt;'error-login', '$results'&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
-
-print "&lt;/items&gt;\n";
-exit 1;
+    print "&lt;/items&gt;\n";
+    exit 1;
 }
-elsif ($errorCode !=0 &amp;&amp; ($err =~ '^.*No such file or directory.*$')){
-print qq{&lt;item uid="error-noinstall"&gt;&lt;arg&gt;'error-noinstall'&lt;/arg&gt;&lt;title&gt;You do not have the Lastpass CLI Installed.&lt;/title&gt;&lt;subtitle&gt;Press enter to be taken to the install instructions.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
+elsif ( ( $err =~ '^Error.*Unable.*retrieve.*askpass.*reply.*' ) ) {
+    print
+qq{&lt;item uid="error-login"&gt;&lt;arg&gt;'error-login', '$results'&lt;/arg&gt;&lt;title&gt;It appears you are not logged in to LastPass.&lt;/title&gt;&lt;subtitle&gt;Please login using the 'lplogin' command or press 'ctrl' + enter to login now.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
 
-print "&lt;/items&gt;\n";
-exit 2;
-}elsif ($errorCode !=0 &amp;&amp; $err eq ""){
-print qq{&lt;item uid="error-nonefound"&gt;&lt;arg&gt;'error-nonefound'&lt;/arg&gt;&lt;title&gt;$errorCode : $results : $err No search results matching your query found.&lt;/title&gt;&lt;subtitle&gt;Please try again with a different query.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
-
-print "&lt;/items&gt;\n";
-exit 2;
-}else {
-
-my @resultsArray = split /\n/, $results;
-
-foreach my $result (@resultsArray) {
-my $id;
-my $name;
-my $username;
-if ($result =~ '^[\d -:]+(.*) +\[id: ([0-9]*)\] +\[username: (.*)\]'){
-$name = "$1";
-$id = "$2";
-$username = "$3";
+    print "&lt;/items&gt;\n";
+    exit 1;
 }
+elsif ( $errorCode != 0 &amp;&amp; ( $err =~ '^.*No such file or directory.*$' ) ) {
+    print
+qq{&lt;item uid="error-noinstall"&gt;&lt;arg&gt;'error-noinstall'&lt;/arg&gt;&lt;title&gt;You do not have the Lastpass CLI Installed.&lt;/title&gt;&lt;subtitle&gt;Press enter to be taken to the install instructions.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
 
-chomp $username;
-
-if ($username eq "")
-{
-  $username = "No username available.";
-} else {
-  $username = "Username: $username";
+    print "&lt;/items&gt;\n";
+    exit 2;
 }
+elsif ( $errorCode != 0 &amp;&amp; $err eq "" ) {
+    print
+qq{&lt;item uid="error-nonefound"&gt;&lt;arg&gt;'error-nonefound'&lt;/arg&gt;&lt;title&gt;$errorCode : $results : $err No search results matching your query found.&lt;/title&gt;&lt;subtitle&gt;Please try again with a different query.&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
 
-$name =~ s/^\(\w+\)\///g;
-
-print qq{&lt;item uid="$id"&gt;&lt;arg&gt;&lt;![CDATA['$name', '$id']]&gt;&lt;/arg&gt;&lt;title&gt;&lt;![CDATA[$name]]&gt;&lt;/title&gt;&lt;subtitle&gt;&lt;![CDATA[$username]]&gt;&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
+    print "&lt;/items&gt;\n";
+    exit 2;
 }
+else {
 
-print "&lt;/items&gt;\n";
+    my @resultsArray = split /\n/, $results;
+
+    foreach my $result (@resultsArray) {
+        my $id;
+        my $name;
+        my $username;
+        if ( $result =~ '^[\d -:]+(.*) +\[id: ([0-9]*)\] +\[username: (.*)\]' )
+        {
+            $name     = "$1";
+            $id       = "$2";
+            $username = "$3";
+        }
+
+        chomp $username;
+
+        if ( $username eq "" ) {
+            $username = "No username available.";
+        }
+        else {
+            $username = "Username: $username";
+        }
+
+        $name =~ s/^\(\w+\)\///g;
+
+        print
+qq{&lt;item uid="$id"&gt;&lt;arg&gt;&lt;![CDATA['$name', '$id']]&gt;&lt;/arg&gt;&lt;title&gt;&lt;![CDATA[$name]]&gt;&lt;/title&gt;&lt;subtitle&gt;&lt;![CDATA[$username]]&gt;&lt;/subtitle&gt;&lt;icon&gt;icon.png&lt;/icon&gt;&lt;/item&gt;\n};
+    }
+
+    print "&lt;/items&gt;\n";
 }
-exit 0;</string>
+exit 0;
+</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -661,32 +681,39 @@ exit 0;</string>
 				<key>script</key>
 				<string>use Env;
 
-@details=({query});
+@details = ( {query} );
 
-if ($details[0] eq 'error-noinstall'){
-`open https://github.com/LastPass/lastpass-cli`;
-exit 0;
-} elsif ($details[0] eq 'error-nonefound'){
-exit 1;
-} else {
-
-my $lpass_exec;
-foreach my $f (qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@) {
-    $lpass_exec = $f
-        if (-x $f);
+if ( $details[0] eq 'error-noinstall' ) {
+    `open https://github.com/LastPass/lastpass-cli`;
+    exit 0;
 }
+elsif ( $details[0] eq 'error-nonefound' ) {
+    exit 1;
+}
+else {
 
-my $loginTimeout =`security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`; 
-chomp $loginTimeout;
+    my $lpass_exec;
+    foreach my $f (
+        qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@
+      )
+    {
+        $lpass_exec = $f
+          if ( -x $f );
+    }
 
-open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt"; 
-my $firstLine = &lt;$file&gt;; 
-close $file;
-chomp $myFirstLine;
+    my $loginTimeout =
+      `security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`;
+    chomp $loginTimeout;
 
-my $results = qx{export LPASS_ASKPASS=\"$firstLine\" &amp;&amp; export LPASS_AGENT_TIMEOUT="$loginTimeout" &amp;&amp; $lpass_exec show --sync=no --password $details[1]};
-chomp $results;
-print $results;
+    open my $file, '&lt;', $ENV{alfred_workflow_data} . "/running_location.txt";
+    my $firstLine = &lt;$file&gt;;
+    close $file;
+    chomp $myFirstLine;
+
+    my $results =
+qx{export LPASS_ASKPASS=\"$firstLine\" &amp;&amp; export LPASS_AGENT_TIMEOUT="$loginTimeout" &amp;&amp; $lpass_exec show --sync=no --password $details[1]};
+    chomp $results;
+    print $results;
 }</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -826,27 +853,31 @@ use warnings;
 
 use Capture::Tiny 'capture';
 
-my ($agent, $agentErr, $agentErrCode) = capture {
-  system('ps -ef | grep "lpass \[agent\]" | grep -v grep | grep -v "perl"');
+my ( $agent, $agentErr, $agentErrCode ) = capture {
+    system('ps -ef | grep "lpass \[agent\]" | grep -v grep | grep -v "perl"');
 };
 
 my $lpass_exec;
-foreach my $f (qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@) {
+foreach my $f (
+    qw@lpass /usr/local/bin/lpass /opt/local/bin/lpass /usr/bin/lpass /opt/homebrew/bin/lpass@
+  )
+{
     $lpass_exec = $f
-        if (-x $f);
+      if ( -x $f );
 }
 
-my ($results, $err, $errorCode) = capture {
-    system($lpass_exec . ' ls --sync=now');
+my ( $results, $err, $errorCode ) = capture {
+    system( $lpass_exec . ' ls --sync=now' );
 };
 
-if (($err =~ '^Error.*ogin.*') || ($agentErr ne "" &amp;&amp; $agentErr != 0)){
-print qq{ERROR: Not currently logged into lastpass};
-exit 1;
-} elsif ($errorCode !=0 &amp;&amp; ($err =~ '^.*No such file or directory.*$')){
-print qq{ERROR: Lastpass CLI not installed};
+if ( ( $err =~ '^Error.*ogin.*' ) || ( $agentErr ne "" &amp;&amp; $agentErr != 0 ) ) {
+    print qq{ERROR: Not currently logged into lastpass};
+    exit 1;
+}
+elsif ( $errorCode != 0 &amp;&amp; ( $err =~ '^.*No such file or directory.*$' ) ) {
+    print qq{ERROR: Lastpass CLI not installed};
 
-exit 2;
+    exit 2;
 }
 print qq{Sync completed successfully.};
 exit 0;</string>

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.brummelhook.alfred.lastpass</string>
+	<string>com.alfredapp.unimatrix0.lastpass</string>
 	<key>category</key>
-	<string>Productivity</string>
+	<string>Internet</string>
 	<key>connections</key>
 	<dict>
 		<key>01DFFE0F-13AB-4E19-AC39-8E2177548224</key>
@@ -13,6 +13,32 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>D21298B3-763D-48F9-A804-C3B06D3B70E7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>064C3191-75CD-4590-A189-08E0F611B593</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F6AD81CF-1FC0-4D86-8A51-7C21CBEC0919</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>06CB7C6C-BC89-4AFA-BC55-40FE336D41C0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7C8140A9-2FA2-46F5-8455-546AFEAFB53E</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -65,6 +91,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>8C058736-CA55-492F-B2EC-8715A0266564</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>25FB86F2-C362-4932-8D19-1FEFDD823DA8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>AFD7CEC0-1436-4C37-9A09-7700111BEC26</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -181,6 +220,33 @@
 				<false/>
 			</dict>
 		</array>
+		<key>AFD7CEC0-1436-4C37-9A09-7700111BEC26</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>064C3191-75CD-4590-A189-08E0F611B593</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>_button1</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>06CB7C6C-BC89-4AFA-BC55-40FE336D41C0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>_button2</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>C2D0FB11-55FC-4FD2-B32A-9923121F0321</key>
 		<array>
 			<dict>
@@ -237,7 +303,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Lothar Haeger</string>
+	<string>Unimatrix0</string>
 	<key>description</key>
 	<string>Search LastPass for usernames, sites and passwords</string>
 	<key>disabled</key>
@@ -254,64 +320,7 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>--display notification "Please wait... preparing login process..." with title "LastPass Login"
-
---Kill any previous login process as sometimes they hang or a user may interrupt them, if there are none (which there often are...) we will get an error response which we ignore.
-try
-	do shell script "killall -9 lpass &gt; /dev/null 2&gt;&amp;1"
-end try
-
-try
-	set login_email to do shell script "`perl -e 'use strict; use warnings; my $emailAddress =`security find-generic-password -w -s \"alfred-lastpass-email-address\"`; chomp $emailAddress; print $emailAddress;'`"
-on error
-	display alert "Email address not set" message "It appears that no email address has been set. Please run 'lpsetemail your_email@example.com' and try again." as critical
-	return
-end try
-
---Try to get a login timeout if a custom one has been set, if not we set to default
-try
-	set login_timeout to do shell script "`perl -e 'use strict; use warnings; my $loginTimeout =`security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`; chomp $loginTimeout; print $loginTimeout;'`"
-on error
-	set login_timeout to 28800
-end try
-
-tell application "Finder"
-	set current_path to container of (path to me) as alias
-end tell
-set current_unix_path to POSIX path of current_path
-
---set osascript to current_unix_path &amp; "passwordInput.osascript"
-
-set osascript to (system attribute "alfred_preferences") &amp; "/workflows/" &amp; (system attribute "alfred_workflow_uid") &amp; "/passwordInput.osascript"
-
-do shell script "export LPASS_ASKPASS=\"" &amp; osascript &amp; "\""
-do shell script "launchctl setenv LPASS_ASKPASS \"" &amp; osascript &amp; "\""
-
-do shell script "launchctl setenv LPASS_AGENT_TIMEOUT " &amp; login_timeout
-
-tell application "Finder"
-	if exists POSIX file "/usr/bin/lpass" then
-		set lpass_binary to "/usr/bin/lpass"
-	else if exists POSIX file "/usr/local/bin/lpass" then
-		set lpass_binary to "/usr/local/bin/lpass"
-	else if exists POSIX file "/opt/local/bin/lpass" then
-		set lpass_binary to "/opt/local/bin/lpass"
-	else if exists POSIX file "/opt/homebrew/bin/lpass" then
-		set lpass_binary to "/opt/homebrew/bin/lpass"
-	end if
-end tell
-
---improvement required here, test if we actually HAVE an lpass_binary and if not error out
-
-if ("{query}" = "scriptlocationnotset") then
-display notification "Please wait... the alfred search will be presented once login is complete." with title "LastPass Login"
-end if
-
-do shell script "/bin/bash -c '" &amp; "export TERM=\"xterm-256color\" &amp;&amp; export LPASS_ASKPASS=\"" &amp; osascript &amp; "\" &amp;&amp; export LPASS_AGENT_TIMEOUT=" &amp; login_timeout &amp; " &amp;&amp; " &amp; lpass_binary &amp; " login \"" &amp; login_email &amp; "\" &amp;&amp; clear &amp;&amp; " &amp; lpass_binary &amp; " ls --sync=now &gt; /dev/null 2&gt;&amp;1 &amp;&amp; exit 0'"
-
-if ("{query}" = "scriptlocationnotset") then
-tell application id "com.runningwithcrayons.Alfred" to search "lp "
-end if</string>
+				<string>--display notification "Please wait... preparing login process..." with title "LastPass Login"--Kill any previous login process as sometimes they hang or a user may interrupt them, if there are none (which there often are...) we will get an error response which we ignore.try	do shell script "killall -9 lpass &gt; /dev/null 2&gt;&amp;1"end trytry	set login_email to do shell script "`perl -e 'use strict; use warnings; my $emailAddress =`security find-generic-password -w -s \"alfred-lastpass-email-address\"`; chomp $emailAddress; print $emailAddress;'`"on error	display alert "Email address not set" message "It appears that no email address has been set. Please run 'lpsetemail your_email@example.com' and try again." as critical	returnend try--Try to get a login timeout if a custom one has been set, if not we set to defaulttry	set login_timeout to do shell script "`perl -e 'use strict; use warnings; my $loginTimeout =`security find-generic-password -w -s \"alfred-lastpass-login-timeout\"`; chomp $loginTimeout; print $loginTimeout;'`"on error	set login_timeout to 28800end try--Try to determine if the user has specified to use --trust on login, if not we don't use it.try	set login_trust to do shell script "`perl -e 'use strict; use warnings; my $trust =`security find-generic-password -w -s \"alfred-lastpass-login-trust\"`; chomp $trust; print $trust;'`"on error	set login_trust to "False"end tryif (login_trust = "True") then	set login_command to "login --trust"else	set login_command to "login"end ifset osascript to (system attribute "alfred_preferences") &amp; "/workflows/" &amp; (system attribute "alfred_workflow_uid") &amp; "/passwordInput.osascript"do shell script "export LPASS_ASKPASS=\"" &amp; osascript &amp; "\""do shell script "launchctl setenv LPASS_ASKPASS \"" &amp; osascript &amp; "\""do shell script "launchctl setenv LPASS_AGENT_TIMEOUT " &amp; login_timeouttell application "Finder"	if exists POSIX file "/usr/bin/lpass" then		set lpass_binary to "/usr/bin/lpass"	else if exists POSIX file "/usr/local/bin/lpass" then		set lpass_binary to "/usr/local/bin/lpass"	else if exists POSIX file "/opt/local/bin/lpass" then		set lpass_binary to "/opt/local/bin/lpass"	else if exists POSIX file "/opt/homebrew/bin/lpass" then		set lpass_binary to "/opt/homebrew/bin/lpass"	end ifend tell--improvement required here, test if we actually HAVE an lpass_binary and if not error outif ("{query}" = "scriptlocationnotset") then	display notification "Please wait... the alfred search will be presented once login is complete." with title "LastPass Login"end ifdo shell script "/bin/bash -c '" &amp; "export TERM=\"xterm-256color\" &amp;&amp; export LPASS_ASKPASS=\"" &amp; osascript &amp; "\" &amp;&amp; export LPASS_AGENT_TIMEOUT=" &amp; login_timeout &amp; " &amp;&amp; " &amp; lpass_binary &amp; " " &amp; login_command &amp; " " &amp; login_email &amp; " &amp;&amp; clear &amp;&amp; " &amp; lpass_binary &amp; " ls --sync=now &gt; /dev/null 2&gt;&amp;1 &amp;&amp; exit 0'"if ("{query}" = "scriptlocationnotset") then	tell application id "com.runningwithcrayons.Alfred" to search "lp "end if</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -1054,175 +1063,353 @@ echo "{query}"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/bash
+
+security add-generic-password -a "alfred-lastpass-login-trust" -s "alfred-lastpass-login-trust" -w "True" -C "note" -U</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>064C3191-75CD-4590-A189-08E0F611B593</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>After a successful multifactor authentication, LastPass will not prompt for multifactor authentication for 30 days.</string>
+				<key>title</key>
+				<string>Multifactor Bypass Enabled</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>F6AD81CF-1FC0-4D86-8A51-7C21CBEC0919</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>lptrust</string>
+				<key>subtext</key>
+				<string>This will bypass LastPass MFA requirements for 30 days</string>
+				<key>text</key>
+				<string>Set LastPass To Utilize --trust Flag</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>25FB86F2-C362-4932-8D19-1FEFDD823DA8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>button1</key>
+				<string>Yes</string>
+				<key>button2</key>
+				<string>No</string>
+				<key>button3</key>
+				<string></string>
+				<key>description</key>
+				<string>Enabling this option will bypass the LastPass multifactor prompt for the next 30 days on this device.</string>
+				<key>title</key>
+				<string>Bypass multifactor prompt for 30 days?</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.dialog</string>
+			<key>uid</key>
+			<string>AFD7CEC0-1436-4C37-9A09-7700111BEC26</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Once the current login session expires, LastPass will prompt for multifactor authentication on the next login</string>
+				<key>title</key>
+				<string>Multifactor Bypass Disabled</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>7C8140A9-2FA2-46F5-8455-546AFEAFB53E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/bash
+
+security add-generic-password -a "alfred-lastpass-login-trust" -s "alfred-lastpass-login-trust" -w "False" -C "note" -U</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>06CB7C6C-BC89-4AFA-BC55-40FE336D41C0</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
-	<string>This is an updated and rebranded version of the LastPass CLI workflow initially created by Stuart C. Ryan and published under GPL-2.
+	<string>This is an updated and rebranded version of the LastPass CLI workflow initially created by Stuart Ryan, updated by Lothar Haeger, and now updated by me (Unimatrix0) and published under GPL-2.
 
-Since the original piece has some bugs that prevent using it on macOS Catalina and since 2016 pull requests are ignored, I assume the code has been abandoned and submit my updated fork as an alternative to move forward.
+Since the Lothar Haeger fork hasn't been updated since January 2022 and pull requests have been ignored since January 2023, I assume the code has been abandoned and submit my updated fork as an alternative to move forward.
 
-See installation instructions at https://github.com/lhaeger/lastpass-alfred-workflow</string>
+See installation instructions at https://github.com/Unimatrix0/lastpass-alfred-workflow/</string>
 	<key>uidata</key>
 	<dict>
 		<key>01DFFE0F-13AB-4E19-AC39-8E2177548224</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
 			<real>160</real>
+		</dict>
+		<key>064C3191-75CD-4590-A189-08E0F611B593</key>
+		<dict>
+			<key>xpos</key>
+			<real>610</real>
+			<key>ypos</key>
+			<real>1010</real>
+		</dict>
+		<key>06CB7C6C-BC89-4AFA-BC55-40FE336D41C0</key>
+		<dict>
+			<key>xpos</key>
+			<real>610</real>
+			<key>ypos</key>
+			<real>1135</real>
 		</dict>
 		<key>09AC0796-377F-4D73-87DC-B1164AC85A95</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<integer>620</integer>
+			<real>620</real>
 		</dict>
 		<key>102D0B94-B4FC-4450-9B5B-9D76AA0FF12C</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<integer>760</integer>
+			<real>760</real>
 		</dict>
 		<key>149C4CF2-82AE-4F6C-8D1D-726438E36F75</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<integer>870</integer>
+			<real>870</real>
 		</dict>
 		<key>1B629A30-41FB-400F-89DC-8B35990D0F84</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<real>700</real>
 			<key>ypos</key>
-			<integer>870</integer>
+			<real>870</real>
 		</dict>
 		<key>201D2F2C-024E-4FA6-8B0C-CF32974E5077</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<real>700</real>
 			<key>ypos</key>
-			<integer>470</integer>
+			<real>470</real>
+		</dict>
+		<key>25FB86F2-C362-4932-8D19-1FEFDD823DA8</key>
+		<dict>
+			<key>xpos</key>
+			<real>295</real>
+			<key>ypos</key>
+			<real>1075</real>
 		</dict>
 		<key>29656ADA-02CB-48FC-BC0E-20376CF8D8EF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
 			<real>320</real>
 		</dict>
 		<key>56D8A615-388A-490E-AA3E-34935634080F</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>870</integer>
+			<real>870</real>
 		</dict>
 		<key>5811419C-5D78-450A-8F28-46CC209BF760</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
 			<real>270</real>
 		</dict>
 		<key>58BA8F4E-3368-453A-9490-DBE7FE60328C</key>
 		<dict>
 			<key>xpos</key>
-			<integer>100</integer>
+			<real>100</real>
 			<key>ypos</key>
 			<real>160</real>
 		</dict>
 		<key>59F80385-2185-4AB0-BE88-A49588D5F66B</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>760</integer>
+			<real>760</real>
+		</dict>
+		<key>7C8140A9-2FA2-46F5-8455-546AFEAFB53E</key>
+		<dict>
+			<key>xpos</key>
+			<real>775</real>
+			<key>ypos</key>
+			<real>1135</real>
 		</dict>
 		<key>815177FB-CED1-42F3-AC5B-C1AC60735FA1</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<real>700</real>
 			<key>ypos</key>
-			<integer>270</integer>
+			<real>270</real>
 		</dict>
 		<key>8820573B-DB5E-4B65-9178-3DD86CF620CC</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<real>700</real>
 			<key>ypos</key>
-			<integer>760</integer>
+			<real>760</real>
 		</dict>
 		<key>8C058736-CA55-492F-B2EC-8715A0266564</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<real>880</real>
 			<key>ypos</key>
-			<integer>470</integer>
+			<real>470</real>
 		</dict>
 		<key>8F65DC4B-ED8E-4EE0-A6E0-14C1F0CDF3A4</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<real>880</real>
 			<key>ypos</key>
-			<integer>270</integer>
+			<real>270</real>
 		</dict>
 		<key>A2718C33-DE84-4E0F-8A09-37DA3C9E8732</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<integer>510</integer>
+			<real>510</real>
+		</dict>
+		<key>AFD7CEC0-1436-4C37-9A09-7700111BEC26</key>
+		<dict>
+			<key>xpos</key>
+			<real>495</real>
+			<key>ypos</key>
+			<real>1095</real>
 		</dict>
 		<key>C2D0FB11-55FC-4FD2-B32A-9923121F0321</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>450</integer>
+			<real>450</real>
 		</dict>
 		<key>D049EE1A-03D1-4BDF-8920-EE8667E7365C</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<integer>390</integer>
+			<real>390</real>
 		</dict>
 		<key>D21298B3-763D-48F9-A804-C3B06D3B70E7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<real>500</real>
 			<key>ypos</key>
-			<real>160</real>
+			<real>150</real>
 		</dict>
 		<key>D71065D5-E20E-435B-A76B-9C351D59165F</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<real>700</real>
 			<key>ypos</key>
-			<integer>620</integer>
+			<real>620</real>
 		</dict>
 		<key>DE8D285B-733F-4B2D-91DA-4613717E2005</key>
 		<dict>
 			<key>xpos</key>
-			<integer>100</integer>
+			<real>100</real>
 			<key>ypos</key>
 			<real>320</real>
+		</dict>
+		<key>F6AD81CF-1FC0-4D86-8A51-7C21CBEC0919</key>
+		<dict>
+			<key>xpos</key>
+			<real>775</real>
+			<key>ypos</key>
+			<real>1010</real>
 		</dict>
 		<key>FF2D41F7-FB7E-4CCD-B82B-4F66FCC78F37</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>620</integer>
+			<real>620</real>
 		</dict>
 	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.5.2</string>
+	<string>1.5.3</string>
 	<key>webaddress</key>
-	<string>https://github.com/lhaeger/lastpass-alfred-workflow</string>
+	<string>https://github.com/Unimatrix0/lastpass-alfred-workflow/</string>
 </dict>
 </plist>

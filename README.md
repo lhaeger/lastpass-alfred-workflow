@@ -3,11 +3,11 @@
 Simple yet powerful integration with the Lastpass CLI so you can now get your passwords out of your Lastpass vault and straight into the clipboard from within Alfred.
 
 ## Current version: 1.5.2
-Requires Alfred 3 or 4 and LastPass CLI v1.3 or higher
+Requires Alfred 3 or higher and LastPass CLI v1.3 or higher
 
 ## Installation
 
-1. Ensure you have Alfred 3 or 4 installed with the Alfred Powerpack License
+1. Ensure you have Alfred 3 or higher installed with the Alfred Powerpack License
 2. Install LastPass command line interface
 	1. using MacPorts: `sudo port install lastpass-cli lastpass-cli-doc`
 	2. using HomeBrew: `brew install lastpass-cli`
